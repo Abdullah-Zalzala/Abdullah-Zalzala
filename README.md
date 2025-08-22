@@ -1,16 +1,18 @@
-## Hi there 👋
+## Hi there I'm Abdullah Zalzala
 
-<!--
-**Abdullah-Zalzala/Abdullah-Zalzala** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+I'm Currently Taking CSC-113 AI Fundamentals And Learning To Collaborate With AI Tools!
 
-Here are some ideas to get you started:
+My Passion Is Drone Flying On All Levels, From Videography To FPV Flying To Mapping And Modeling, As Well As Coding 
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+I'm Currently Working On
+- 🤖 AI collaboration and prompt engineering
+- 🐙 GitHub workflows and version control
+- 💡 Building my first AI assistant
+- 
+- 🌱 I’m currently learning How To Code Properly
+- 
+- 💬 Ask me about Anything drone-related
+- 📫 How to reach me: AZPilot_Drone_Photography on Instagram And Facebook and AZDronep@gmail.com
+- 😄 Pronouns: He/Him
+- ⚡ Fun fact: I Have Been Running My Own Drone Photography Company For 3+ Years Now And Plan To Enroll in Embry-Riddle in Daytona Beach, Florida To Further Push Myself To The Next Stage
+
