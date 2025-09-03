@@ -18,8 +18,10 @@ int main () {
 // Came out in 2017
 // Made 704.2 million Gross
 
-cout << "The movie IT Came out in 2017 Made 704.2 million Gross" << endl;
-Cout << "My Favorite quote was kimmiaye 
+cout << "My Favorite movie Is The movie IT" << endl;
+cout << "IT Came out in 2017" << endl;
+cout << "IT Made 704.2 million Gross" << endl;
+cout << "My Favorite quote was kimmiaye" << endl;
     // end program
     return 0;
 
