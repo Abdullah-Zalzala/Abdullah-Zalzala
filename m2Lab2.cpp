@@ -1,4 +1,4 @@
-> """
+>>> """
 ... csc134
 ... M2Lab2- Python turtle
 ... Abdullah Zalzala
