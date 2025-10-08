@@ -42,11 +42,26 @@ int main() {
     int dice_sum = dice[0] + dice[1] + dice[2] + dice[3] + dice[4]; 
     cout << "SUM IS: " << dice_sum << endl;
 
-    if dice_sum <20 
- cout << "you Died"
- return 0
+    if (dice_sum <20) { 
+ cout << "you Died" << endl;
+ return 0;
 }
 
+    if (dice_sum >=20) {
+		cout << "you survived" << endl;
+	}
+
+	cout << "Would you like to play again?" << endl;
+	cout << "Type 1 for yes" << endl;
+	cout << "Type 2 for no" << endl;
+	int choice;
+	cin >> choice;
+	if (1 == choice) {
+		main();
+	}
+	else {
+		cout << "Thanks for playing!" << endl; // this runs no matter what they choose
+	}
 	return 0;
 }
 
