@@ -35,10 +35,10 @@ void say_hello() {
 
 int get_the_answer() {
 
-
 }
 
 double double_a_number(double the_num){
     double answer = the_num * 2;
     return answer;
+    return 0:
 }
