@@ -26,8 +26,8 @@ void LevelUp(int &defense, int &strength, int &intelligence,
 
 // New helpers for ring room + inventory + checklist demos
 void EnterRingRoomAndInventory(int &damageBonus);
-void DemoExercise1_RecoverLoop(); // Exercise 1
-void DemoExercise2_LevelTable(int baseDef, int baseStr, int baseInt, int baseCool, int baseMaxHP, int baseMag); // Exercise 2
+void RecoverLoop(); // Exercise 1
+void LevelTable(int baseDef, int baseStr, int baseInt, int baseCool, int baseMaxHP, int baseMag); // Exercise 2
 
 // ------------------------------------------------------
 
@@ -304,12 +304,12 @@ void EnterRingRoomAndInventory(int &damageBonus) {
     // ---------------- TESTING CHECKLIST DEMOS ----------------
     cout << "\n\nTESTING CHECKLIST:\n";
     cout << "Exercise 1 (Health loop demo):\n";
-    DemoExercise1_RecoverLoop();
+    RecoverLoop();
 
     cout << "\nExercise 2 (10-level stat growth table):\n";
     // For demo, assume level-up pattern is +5 per level for all stats.
     // Use a reasonable base so the table is readable.
-    DemoExercise2_LevelTable(50, 80, 30, 30, 100, 10);
+    LevelTable(50, 80, 30, 30, 100, 10);
 
     cout << "\nExercise 3 (Inventory list + search) done above.\n";
     cout << "Common mistakes avoided: array indices, off-by-one, infinite loops, display numbering 1–5.\n\n";
@@ -317,7 +317,7 @@ void EnterRingRoomAndInventory(int &damageBonus) {
 
 // -------------------- DEMO EXERCISES --------------------
 
-void DemoExercise1_RecoverLoop() {
+void RecoverLoop() {
     // Exercise 1:
     // [x] Health starts at 30
     // [x] Health increases by 10 each loop
@@ -343,12 +343,8 @@ void DemoExercise1_RecoverLoop() {
     }
 }
 
-void DemoExercise2_LevelTable(int baseDef, int baseStr, int baseInt, int baseCool, int baseMaxHP, int baseMag) {
-    // Exercise 2:
-    // [x] Stats calculate correctly for each level (+5/level)
-    // [x] Table is formatted and readable
-    // [x] All 10 levels display
-    // [x] Total growth is calculated correctly
+void LevelTable(int baseDef, int baseStr, int baseInt, int baseCool, int baseMaxHP, int baseMag) {
+
 
     cout << left << setw(6) << "Lvl"
          << setw(9)  << "Defense"
