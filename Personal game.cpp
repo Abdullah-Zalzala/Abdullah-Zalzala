@@ -259,7 +259,7 @@ void EnterRingRoomAndInventory(int &damageBonus) {
     cout << "You obtained: Wolf-Fang Ring! (Damage +20)\n";
     damageBonus += 20;
 
-    // ---------------- Inventory (Exercise 3 requirements) ----------------
+    // ---------------- Inventory  ----------------
     // TODO: Create your equipment array with 5 items
     string equipment[5] = {
         "Iron Sword",
@@ -303,27 +303,22 @@ void EnterRingRoomAndInventory(int &damageBonus) {
 
     // ---------------- TESTING CHECKLIST DEMOS ----------------
     cout << "\n\nTESTING CHECKLIST:\n";
-    cout << "Exercise 1 (Health loop demo):\n";
+    cout << "Health loop:\n";
     RecoverLoop();
 
-    cout << "\nExercise 2 (10-level stat growth table):\n";
+    cout << "\n10-level stat growth table:\n";
     // For demo, assume level-up pattern is +5 per level for all stats.
     // Use a reasonable base so the table is readable.
     LevelTable(50, 80, 30, 30, 100, 10);
 
-    cout << "\nExercise 3 (Inventory list + search) done above.\n";
+    cout << "\nInventory list + search done above.\n";
     cout << "Common mistakes avoided: array indices, off-by-one, infinite loops, display numbering 1–5.\n\n";
 }
 
 // -------------------- DEMO EXERCISES --------------------
 
 void RecoverLoop() {
-    // Exercise 1:
-    // [x] Health starts at 30
-    // [x] Health increases by 10 each loop
-    // [x] Loop stops at exactly 100
-    // [x] "Fully recovered!" message displays
-    // [x] No infinite loop!
+
 
     int health = 30;
     cout << "Start health: " << health << endl;
