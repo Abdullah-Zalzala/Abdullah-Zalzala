@@ -36,7 +36,7 @@ void main_menu() {
     cout << "1. Try the front door" << endl;
     cout << "2. Sneak around back" << endl;
     cout << "3. Forget it, and go home" << endl;
-    cout << "4. [Quit]" << endl;
+    cout << "4. Quit" << endl;
     cout << "Choose: ";
     cin >> choice;
 
