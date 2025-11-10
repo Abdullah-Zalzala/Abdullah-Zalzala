@@ -10,6 +10,7 @@ m6t1.cpp
 #include <string>
 
 using namespace std;
+
 void method1();
 void method2();
 
@@ -38,7 +39,8 @@ void method1() {
         poke_total += poke_today;
         count++;
     }
-
+cout << "total pokemon = " << poke_total << endl;
+cout << "average pokemon = " << poke_avg << endl;
 }
 
 void method2() {
