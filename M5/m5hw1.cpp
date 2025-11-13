@@ -39,3 +39,28 @@ void question1() {
          << " is " << avg << " inches." << endl << endl;
 }
 
+
+
+// ---------------------------------------------
+// QUESTION 2: Volume of a Hyperrectangle
+// ---------------------------------------------
+void question2() {
+    double width, length, height;
+
+    cout << "Enter width: ";
+    cin >> width;
+    cout << "Enter length: ";
+    cin >> length;
+    cout << "Enter height: ";
+    cin >> height;
+
+    if (width <= 0 || length <= 0 || height <= 0) {
+        cout << "Error: No dimension can be zero or less." << endl << endl;
+        return;
+    }
+
+    double volume = width * length * height;
+
+    cout << "The volume of the block is: " << volume << endl << endl;
+}
+
