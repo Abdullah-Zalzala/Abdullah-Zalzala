@@ -206,3 +206,36 @@ void question5() {
 }
 
 
+
+// ---------------------------------------------
+// MAIN MENU (QUESTION 6)
+// ---------------------------------------------
+int main() {
+    int choice;
+
+    do {
+        cout << "MAIN MENU" << endl;
+        cout << "1. Question 1 - Average Rainfall" << endl;
+        cout << "2. Question 2 - Block Volume" << endl;
+        cout << "3. Question 3 - Roman Numerals" << endl;
+        cout << "4. Question 4 - Geometry Calculator" << endl;
+        cout << "5. Question 5 - Distance Traveled" << endl;
+        cout << "6. Exit" << endl;
+        cout << "Enter your choice (1-6): ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1: question1(); break;
+            case 2: question2(); break;
+            case 3: question3(); break;
+            case 4: question4(); break;
+            case 5: question5(); break;
+            case 6: cout << "Exiting program..." << endl; break;
+            default:
+                cout << "Invalid choice. Please enter a number 1-6." << endl << endl;
+        }
+
+    } while (choice != 6);
+
+    return 0;
+}
