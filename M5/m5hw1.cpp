@@ -172,3 +172,37 @@ void question4() {
 }
 
 
+
+// ---------------------------------------------
+// QUESTION 5: Distance Traveled (loop)
+// ---------------------------------------------
+void question5() {
+    int speed, hours;
+
+    cout << "What is the speed of the vehicle in mph? ";
+    cin >> speed;
+
+    if (speed < 0) {
+        cout << "Speed cannot be negative." << endl << endl;
+        return;
+    }
+
+    cout << "How many hours has it traveled? ";
+    cin >> hours;
+
+    if (hours < 1) {
+        cout << "Hours must be at least 1." << endl << endl;
+        return;
+    }
+
+    cout << "Hour   Distance Traveled" << endl;
+    cout << "----------------------------" << endl;
+
+    for (int i = 1; i <= hours; i++) {
+        cout << setw(3) << i << setw(12) << (speed * i) << endl;
+    }
+
+    cout << endl;
+}
+
+
