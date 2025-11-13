@@ -98,3 +98,77 @@ void question3() {
 }
 
 
+
+// ---------------------------------------------
+// QUESTION 4: Geometry Calculator
+// ---------------------------------------------
+void question4() {
+    int choice;
+    cout << "Geometry Calculator" << endl << endl;
+    cout << "1. Calculate the Area of a Circle" << endl;
+    cout << "2. Calculate the Area of a Rectangle" << endl;
+    cout << "3. Calculate the Area of a Triangle" << endl;
+    cout << "4. Quit" << endl << endl;
+    cout << "Enter your choice (1-4): ";
+    cin >> choice;
+
+    if (choice < 1 || choice > 4) {
+        cout << "The valid choices are 1 through 4. Run the program again and select one of those." << endl << endl;
+        return;
+    }
+
+    if (choice == 4) {
+        cout << "Returning to main menu..." << endl << endl;
+        return;
+    }
+
+    cout << fixed << setprecision(5);
+
+    if (choice == 1) {
+        double radius;
+        cout << "Enter the circle's radius: ";
+        cin >> radius;
+
+        if (radius < 0) {
+            cout << "The radius cannot be less than zero." << endl << endl;
+            return;
+        }
+
+        double area = 3.14159 * radius * radius;
+        cout << "The area is " << area << endl << endl;
+    }
+
+    else if (choice == 2) {
+        double length, width;
+        cout << "Enter the rectangle length: ";
+        cin >> length;
+        cout << "Enter the rectangle width: ";
+        cin >> width;
+
+        if (length < 0 || width < 0) {
+            cout << "Only enter positive values for length and width." << endl << endl;
+            return;
+        }
+
+        double area = length * width;
+        cout << "The area is " << area << endl << endl;
+    }
+
+    else if (choice == 3) {
+        double base, height;
+        cout << "Enter the triangle base: ";
+        cin >> base;
+        cout << "Enter the triangle height: ";
+        cin >> height;
+
+        if (base < 0 || height < 0) {
+            cout << "Only enter positive values for base and height." << endl << endl;
+            return;
+        }
+
+        double area = base * height * 0.5;
+        cout << "The area is " << area << endl << endl;
+    }
+}
+
+
