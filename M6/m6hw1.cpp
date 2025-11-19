@@ -1,7 +1,7 @@
 /*
 Abdullah Zalzala
 11/17/2025
-m6lab2 already covers up to gold
+m6lab2 already covers up to gold.
 */
 
 #include <iostream>
