@@ -52,7 +52,7 @@ int main() {
         "Walls lined with old porcelain tiles and a strangely wooden toilet.",
         "A spacious attic filled with old furniture and cobwebs.",
         "An old and dirty hallway with two doors.",
-        "A dark, damp basement. The door looks locked.",
+        "You Found the holy Grail inside the basement YOU WIN!.",
         "You found a key inside the toilet tank!",
         "A small, dusty closet filled with broken shelves."
     };
