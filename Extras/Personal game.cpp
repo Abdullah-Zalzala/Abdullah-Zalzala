@@ -4,37 +4,16 @@ Abdullah Zalzala
 csc134
 m4lab1
 */
-
 #include <iostream>
 #include <string>
-#include <cstdlib> // rand, srand
-#include <ctime>   // time
-#include <limits>  // numeric_limits
-#include <iomanip> // setw, left, right
+#include <cstdlib>
+#include <ctime>
+#include <limits>
+#include <iomanip>
 using namespace std;
 
-// ---------------- Function Prototypes ----------------
-void PickClass(string &character, int &defense, int &strength, int &intelligence,
-               int &cool, int &health, int &maxHealth, int &magic);
-void Rest(int &health, int maxHealth);
-bool HideSucceeds(int cool);
-bool AttackHits(int chance);
-void WolfBattle(int &health, int &defense, int &strength, int &intelligence,
-                int &cool, int &maxHealth, int &magic, int &damageBonus);
-void LevelUp(int &defense, int &strength, int &intelligence, 
-             int &cool, int &maxHealth, int &magic, int &health);
-
-// New helpers for ring room + inventory + checklist demos
-void EnterRingRoomAndInventory(int &damageBonus);
-void RecoverLoop(); // Exercise 1
-void LevelTable(int baseDef, int baseStr, int baseInt, int baseCool, int baseMaxHP, int baseMag); // Exercise 2
-
-// ------------------------------------------------------
-
-int main() {
-    srand(static_cast<unsigned>(time(nullptr))); // seed random
-
-    string character; 
+struct Player {
+    string character;
     int defense;
     int strength;
     int intelligence;
@@ -42,371 +21,409 @@ int main() {
     int health;
     int maxHealth;
     int magic;
-    int damageBonus = 0; // NEW: bonus damage from items (ring = +20)
+    int damageBonus;
+};
 
-    // Pick class (recursively re-asks if invalid)
-    PickClass(character, defense, strength, intelligence, cool, health, maxHealth, magic);
+bool AttackHits(int chance) {
+    int roll = rand() % 100 + 1;
+    return roll <= chance;
+}
 
-    // Display chosen character and stats
-    cout << "\nYou chose " << character << endl;
-    cout << "________Character Stats________" << endl;
-    cout << "Defense: " << defense << endl;
-    cout << "Strength: " << strength << endl;
-    cout << "Intelligence: " << intelligence << endl;
-    cout << "Cool: " << cool << endl;
-    cout << "Health: " << health << endl;
-    cout << "Max Health: " << maxHealth << endl;
-    cout << "Magic: " << magic << endl;
+bool AttemptFlee(Player &p) {
+    double chance = p.cool / 100.0;
+    double roll = (rand() % 100) / 100.0;
+    return roll <= chance;
+}
 
-    cout << "\n________Story Time________" << endl;
-    cout << "You take a deep breath as you and your party enter the dark dungeon." << endl;
-    cout << "An eerie mist swirls around you..." << endl;
-    cout << "All of a sudden, your entire party falls to the floor unconscious!" << endl;
-    cout << "You wake up after 10 minutes." << endl;
+void SleepBoost(Player &p) {
+    p.defense += 2;
+    p.strength += 2;
+    p.intelligence += 2;
+    p.cool += 2;
+    p.maxHealth += 2;
+    p.magic += 2;
+    p.health = p.maxHealth;
+}
 
-    cout << "\nWhile you were unconscious, your body began to recover..." << endl;
-    Rest(health, maxHealth);
-    cout << "\nYou open your eyes feeling completely restored." << endl;
-    cout << "Your current health: " << health << "/" << maxHealth << endl;
-    cout << "You stand up, ready to face what lies ahead in the dungeon..." << endl;
+void RestorePlayer(Player &p) {
+    p.health = p.maxHealth;
+}
 
-    cout << "You turn to see your party members still unconscious." << endl;
-    cout << "There is a sign on the wall that reads: 'If you want to save your friends, you must find the antidote at the end of the mist.'" << endl;
-
-    cout << "\nDo you wish to proceed deeper into the dungeon? (y/n): ";
-    string choice;
-    cin >> choice;
-
-    if (choice == "y" || choice == "Y") {
-        cout << "You bravely venture deeper into the dungeon, determined to find the antidote and save your friends." << endl;
-    } else {
-        cout << "You decide to leave your party behind." << endl;
+int WarriorPowerSlash(Player &p) {
+    if (!AttackHits(70)) {
+        cout << "Power Slash missed." << endl;
         return 0;
     }
+    return int(p.strength * 1.5);
+}
 
-    // Hide or confront decision
-    cout << "\nAll of a sudden, as you move forward into the tunnel, you hear a faint set of footsteps echoing through the mist." << endl;
-    cout << "Do you want to try to hide or confront whoever is coming? (y = hide / n = confront): ";
-    string decision;
-    cin >> decision;
+int WarriorShieldBash(Player &p, bool &stun) {
+    stun = (rand() % 100 < 10);
+    return p.defense / 2;
+}
 
-    if (decision == "y" || decision == "Y") {
-        cout << "You quickly find a hiding spot behind a large rock, holding your breath..." << endl;
+int MageFireball(Player &p) {
+    if (!AttackHits(85)) {
+        cout << "Fireball missed." << endl;
+        return 0;
+    }
+    return int(p.intelligence * 1.8 + p.magic * 0.5);
+}
 
-        bool hidden = HideSucceeds(cool);
+int MageLightning(Player &p) {
+    return int(p.intelligence * 1.2);
+}
 
-        if (hidden) {
-            cout << "Your cool composure keeps you perfectly still. The figure passes by without noticing you." << endl;
-            cout << "You remain hidden and avoid the confrontation.\n";
-            // ➜ Ring room after sneaking past
-            EnterRingRoomAndInventory(damageBonus);
-        } else {
-            cout << "You shift slightly... A stone scrapes. The figure whips around and spots you!" << endl;
-            cout << "You've been discovered — it's a feral wolf!\n";
-            WolfBattle(health, defense, strength, intelligence, cool, maxHealth, magic, damageBonus);
-            // If you survive and/or defeat the wolf, you'll be taken to ring room inside WolfBattle().
+int SpyBackstab(Player &p) {
+    if (!AttackHits(p.cool)) {
+        cout << "Backstab missed." << endl;
+        return 0;
+    }
+    return p.strength + int(p.cool * 1.2);
+}
+
+void SpySmokeBomb(bool &escaped) {
+    escaped = true;
+}
+
+int HealerSmite(Player &p) {
+    return int(p.magic * 1.5);
+}
+
+void HealerHeal(Player &p) {
+    p.health += 30;
+    if (p.health > p.maxHealth) p.health = p.maxHealth;
+}
+
+int TankBodySlam(Player &p) {
+    if (!AttackHits(80)) {
+        cout << "Body Slam missed." << endl;
+        return 0;
+    }
+    return int(p.defense * 1.3);
+}
+
+void TankIronFortress(Player &p) {
+    p.defense += 10;
+}
+
+int PlayerAttack(Player &p) {
+    if (!AttackHits(75)) {
+        cout << "Your attack missed." << endl;
+        return 0;
+    }
+    return (p.strength / 2) + p.damageBonus;
+}
+
+int MagicAttack(Player &p) {
+    if (p.magic < 10) {
+        cout << "Not enough magic." << endl;
+        return 0;
+    }
+    p.magic -= 10;
+    return (p.intelligence / 2) + (p.magic / 5);
+}
+
+void ShowInventory(string inv[], int size) {
+    for (int i = 0; i < size; i++) {
+        cout << inv[i] << endl;
+    }
+}
+
+void InventorySearch(string inv[], int size) {
+    cout << "Enter item to search: ";
+    string term;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    getline(cin, term);
+    bool found = false;
+    for (int i = 0; i < size; i++) {
+        if (inv[i] == term) {
+            found = true;
+            cout << "Found in slot " << (i + 1) << endl;
+            return;
         }
-    } 
-    else if (decision == "n" || decision == "N") {
-        cout << "You step forward boldly, calling out to whoever is approaching." << endl;
-        cout << "You see a wolf emerging from the shadows — eyes glowing red!" << endl;
-        cout << "Prepare for battle!" << endl;
-        WolfBattle(health, defense, strength, intelligence, cool, maxHealth, magic, damageBonus);
-    } 
-    else {
-        cout << "You hesitate, unsure what to do... the footsteps grow closer." << endl;
-        cout << "The wolf notices you anyway!\n";
-        WolfBattle(health, defense, strength, intelligence, cool, maxHealth, magic, damageBonus);
     }
-
-    return 0;
+    if (!found) cout << "Item not found." << endl;
 }
 
-// ---------------- Helper Functions ----------------
+void EnterRingRoom(Player &p) {
+    cout << endl;
+    cout << "You find a glowing Wolf-Fang Ring on a pedestal." << endl;
+    cout << "Damage increased by 20." << endl;
+    cout << endl << endl;
+    p.damageBonus += 20;
+}
 
-// Rest: heals by +10 until full using recursion (no loops)
-void Rest(int &health, int maxHealth) {
-    if (health >= maxHealth) {
-        cout << "Your health is fully restored (" << health << "/" << maxHealth << ")." << endl;
-    } 
-    else if (health + 10 <= maxHealth) {
-        health = health + 10;
-        cout << "Recovering... +10 health (" << health << "/" << maxHealth << ")." << endl;
-        Rest(health, maxHealth);
-    } 
-    else if (health + 10 > maxHealth) {
-        health = maxHealth;
-        cout << "Recovering... health capped at max (" << health << "/" << maxHealth << ")." << endl;
-        Rest(health, maxHealth);
+void PlayerTurn(Player &p, int &wolfHP, bool &wolfStunned, bool &escaped) {
+    cout << "Your Health: " << p.health << "/" << p.maxHealth << endl;
+    cout << "Wolf Health: " << wolfHP << endl;
+    cout << endl;
+    cout << "Choose your action:" << endl;
+    cout << "1. Attack" << endl;
+    cout << "2. Magic" << endl;
+    cout << "3. Special" << endl;
+    cout << "4. Flee" << endl;
+    cout << "> ";
+    int choice;
+    cin >> choice;
+    if (choice == 1) {
+        int dmg = PlayerAttack(p);
+        wolfHP -= dmg;
+        cout << "You deal " << dmg << " damage." << endl;
+        cout << endl << endl;
+    }
+    else if (choice == 2) {
+        int dmg = MagicAttack(p);
+        wolfHP -= dmg;
+        cout << "Magic hits for " << dmg << " damage." << endl;
+        cout << endl << endl;
+    }
+    else if (choice == 3) {
+        cout << endl;
+        if (p.character == "Warrior") {
+            cout << "1. Power Slash" << endl;
+            cout << "2. Shield Bash" << endl;
+            cout << "> ";
+            int c; cin >> c;
+            if (c == 1) {
+                int dmg = WarriorPowerSlash(p);
+                wolfHP -= dmg;
+                cout << "Power Slash deals " << dmg << " damage." << endl;
+            } else {
+                bool stun = false;
+                int dmg = WarriorShieldBash(p, stun);
+                wolfHP -= dmg;
+                cout << "Shield Bash deals " << dmg << " damage." << endl;
+                if (stun) {
+                    wolfStunned = true;
+                    cout << "The wolf is stunned." << endl;
+                }
+            }
+        }
+        else if (p.character == "Mage") {
+            cout << "1. Fireball" << endl;
+            cout << "2. Lightning Bolt" << endl;
+            cout << "> ";
+            int c; cin >> c;
+            if (c == 1) {
+                int dmg = MageFireball(p);
+                wolfHP -= dmg;
+                cout << "Fireball hits for " << dmg << " damage." << endl;
+            } else {
+                int dmg = MageLightning(p);
+                wolfHP -= dmg;
+                cout << "Lightning hits for " << dmg << " damage." << endl;
+            }
+        }
+        else if (p.character == "Spy") {
+            cout << "1. Backstab" << endl;
+            cout << "2. Smoke Bomb" << endl;
+            cout << "> ";
+            int c; cin >> c;
+            if (c == 1) {
+                int dmg = SpyBackstab(p);
+                wolfHP -= dmg;
+                cout << "Backstab deals " << dmg << " damage." << endl;
+            } else {
+                SpySmokeBomb(escaped);
+                cout << "You disappear in smoke." << endl;
+            }
+        }
+        else if (p.character == "Healer") {
+            cout << "1. Blessed Smite" << endl;
+            cout << "2. Heal" << endl;
+            cout << "> ";
+            int c; cin >> c;
+            if (c == 1) {
+                int dmg = HealerSmite(p);
+                wolfHP -= dmg;
+                cout << "Smite deals " << dmg << " damage." << endl;
+            } else {
+                HealerHeal(p);
+                cout << "You heal yourself." << endl;
+            }
+        }
+        else if (p.character == "Tank") {
+            cout << "1. Body Slam" << endl;
+            cout << "2. Iron Fortress" << endl;
+            cout << "> ";
+            int c; cin >> c;
+            if (c == 1) {
+                int dmg = TankBodySlam(p);
+                wolfHP -= dmg;
+                cout << "Body Slam deals " << dmg << " damage." << endl;
+            } else {
+                TankIronFortress(p);
+                cout << "Defense increased." << endl;
+            }
+        }
+        cout << endl << endl;
+    }
+    else if (choice == 4) {
+        if (AttemptFlee(p)) {
+            escaped = true;
+            return;
+        } else {
+            cout << "Flee failed. The wolf gets a free hit." << endl;
+            cout << endl << endl;
+        }
     }
 }
 
-// Hide success based on cool %
-bool HideSucceeds(int cool) {
-    if (cool < 0) cool = 0;
-    else if (cool > 100) cool = 100;
-
-    if (cool <= 0) return false;
-    else if (cool >= 100) return true;
-
-    int roll = (rand() % 100) + 1;
-    if (roll <= cool) return true;
-    else return false;
-}
-
-// Attack hit chance
-bool AttackHits(int chance) {
-    if (chance >= 100) return true;
-    else if (chance <= 0) return false;
-
-    int roll = (rand() % 100) + 1;
-    if (roll <= chance) return true;
-    else return false;
-}
-
-// Wolf battle — one round, chance-based; on victory ➜ LevelUp then Ring room
-void WolfBattle(int &health, int &defense, int &strength, int &intelligence,
-                int &cool, int &maxHealth, int &magic, int &damageBonus) {
-
-    int wolfHealth = 50;
-    int wolfAttack = 20;
-    int wolfHitChance = 80;
-    int playerHitChance = 70;
-
-    cout << "\nThe Wolf snarls and lunges at you!\n";
-
-    // Wolf attacks first
-    bool wolfHits = AttackHits(wolfHitChance);
-    if (wolfHits) {
-        int damage = wolfAttack - (defense / 10);
-        if (damage < 0) damage = 0;
-        health = health - damage;
-        cout << "The Wolf bites you! You take " << damage << " damage.\n";
-    } 
-    else {
-        cout << "The Wolf snaps at you but misses!\n";
+void WolfBattle(Player &p) {
+    int wolfHP = 60;
+    int wolfAtk = 25;
+    int wolfHit = 80;
+    bool wolfStunned = false;
+    bool escaped = false;
+    cout << "A wolf snarls and prepares to attack." << endl;
+    cout << endl << endl;
+    while (wolfHP > 0 && p.health > 0 && !escaped) {
+        if (!wolfStunned) {
+            if (AttackHits(wolfHit)) {
+                int dmg = wolfAtk - (p.defense / 10);
+                if (dmg < 0) dmg = 0;
+                p.health -= dmg;
+                cout << "The wolf bites you for " << dmg << " damage." << endl;
+            } else {
+                cout << "The wolf misses." << endl;
+            }
+        } else {
+            cout << "The wolf is stunned and cannot attack." << endl;
+            wolfStunned = false;
+        }
+        cout << endl << endl;
+        if (p.health <= 0) return;
+        PlayerTurn(p, wolfHP, wolfStunned, escaped);
     }
-
-    if (health <= 0) {
-        cout << "You collapse to the ground... defeated by the Wolf.\n";
-        return;
-    }
-
-    // Player’s turn (uses bonus damage from gear)
-    bool playerHits = AttackHits(playerHitChance);
-    if (playerHits) {
-        int playerDamage = (strength / 2) + damageBonus; // <-- bonus applied
-        wolfHealth = wolfHealth - playerDamage;
-        cout << "You strike the Wolf for " << playerDamage << " damage!\n";
-    } 
-    else {
-        cout << "You swing your weapon, but the Wolf dodges!\n";
-    }
-
-    if (wolfHealth <= 0) {
-        cout << "\nThe Wolf falls to the ground, defeated!\n";
-        LevelUp(defense, strength, intelligence, cool, maxHealth, magic, health);
-        // ➜ Then ring room
-        EnterRingRoomAndInventory(damageBonus);
-    } 
-    else {
-        cout << "The Wolf growls — it’s still standing with " 
-             << wolfHealth << " HP remaining!\n";
-        cout << "Your current health: " << health << endl;
+    if (escaped) return;
+    if (wolfHP <= 0) {
+        cout << "You defeat the wolf." << endl;
+        cout << endl << endl;
+        RestorePlayer(p);
+        EnterRingRoom(p);
     }
 }
 
-// Level Up: +5 to all stats
-void LevelUp(int &defense, int &strength, int &intelligence, 
-             int &cool, int &maxHealth, int &magic, int &health) {
-
-    cout << "\n========== LEVEL UP! ==========\n";
-    cout << "Victory surges through your veins — you feel stronger!\n";
-    cout << "Each of your core stats increases by +5!\n\n";
-
-    int oldDefense = defense;
-    int oldStrength = strength;
-    int oldIntelligence = intelligence;
-    int oldCool = cool;
-    int oldMaxHealth = maxHealth;
-    int oldMagic = magic;
-
-    defense += 5;
-    strength += 5;
-    intelligence += 5;
-    cool += 5;
-    maxHealth += 5;
-    magic += 5;
-
-    health = maxHealth;
-
-    cout << "Defense: " << oldDefense << " → " << defense << endl;
-    cout << "Strength: " << oldStrength << " → " << strength << endl;
-    cout << "Intelligence: " << oldIntelligence << " → " << intelligence << endl;
-    cout << "Cool: " << oldCool << " → " << cool << endl;
-    cout << "Max Health: " << oldMaxHealth << " → " << maxHealth << endl;
-    cout << "Magic: " << oldMagic << " → " << magic << endl;
-    cout << "================================\n";
-    cout << "Your wounds heal as your power surges. Health restored to " 
-         << health << "/" << maxHealth << "!\n";
-    cout << "================================\n";
-}
-
-// ================== RING ROOM + INVENTORY + CHECKLIST DEMOS ==================
-void EnterRingRoomAndInventory(int &damageBonus) {
-    cout << "\nYou enter a quiet stone chamber. At its center lies a small pedestal.\n";
-    cout << "Upon it rests a gleaming band etched with a wolf’s fang.\n";
-    cout << "You obtained: Wolf-Fang Ring! (Damage +20)\n";
-    damageBonus += 20;
-
-    // ---------------- Inventory  ----------------
-    // TODO: Create your equipment array with 5 items
-    string equipment[5] = {
+void RestRoom(Player &p, int roomNumber) {
+    string items[5] = {
         "Iron Sword",
         "Leather Armor",
         "Health Potion",
-        "Wolf-Fang Ring (+20 DMG)", // placed here
+        "Wolf-Fang Ring (+20 DMG)",
         "Rope"
     };
-
-    // TODO: Display all items using a for loop
-    cout << "\n=== YOUR INVENTORY ===" << endl;
-    for (int i = 0; i < 5; i++) {
-        cout << (i + 1) << ". " << equipment[i] << endl; // numbered 1–5
-    }
-    cout << "======================" << endl << endl;
-
-    // TODO: Get search term from user
-    cout << "Enter item to search for: ";
-    cin.ignore(numeric_limits<streamsize>::max(), '\n'); // clear buffer before getline
-    string searchTerm;
-    getline(cin, searchTerm);
-
-    // TODO: Search for the item using a loop
-    bool found = false;
-    int position = -1;
-    for (int i = 0; i < 5; i++) {
-        if (equipment[i] == searchTerm) {
-            found = true;
-            position = i;
-            break; // Stop searching once found
+    cout << "You enter a quiet resting chamber." << endl;
+    cout << endl << endl;
+    bool done = false;
+    while (!done) {
+        cout << "Choose an option:" << endl;
+        cout << "1. Sleep" << endl;
+        cout << "2. Check Inventory" << endl;
+        cout << "3. Continue" << endl;
+        cout << "> ";
+        int choice;
+        cin >> choice;
+        cout << endl;
+        if (choice == 1) {
+            SleepBoost(p);
+            cout << "You feel stronger after resting." << endl;
+            cout << endl << endl;
+        }
+        else if (choice == 2) {
+            ShowInventory(items, 5);
+            cout << endl;
+            InventorySearch(items, 5);
+            cout << endl << endl;
+        }
+        else if (choice == 3) {
+            done = true;
         }
     }
-
-    // TODO: Display search results
-    if (found) {
-        cout << "Found \"" << searchTerm << "\" in slot " 
-             << (position + 1) << "!" << endl; // position shown as 1–5
-    } else {
-        cout << "\"" << searchTerm << "\" not found in inventory." << endl;
-    }
-
-    // ---------------- TESTING CHECKLIST DEMOS ----------------
-    cout << "\n\nTESTING CHECKLIST:\n";
-    cout << "Health loop:\n";
-    RecoverLoop();
-
-    cout << "\n10-level stat growth table:\n";
-    // For demo, assume level-up pattern is +5 per level for all stats.
-    // Use a reasonable base so the table is readable.
-    LevelTable(50, 80, 30, 30, 100, 10);
-
-    cout << "\nInventory list + search done above.\n";
-    cout << "Common mistakes avoided: array indices, off-by-one, infinite loops, display numbering 1–5.\n\n";
 }
 
-// -------------------- DEMO EXERCISES --------------------
-
-void RecoverLoop() {
-
-
-    int health = 30;
-    cout << "Start health: " << health << endl;
-
-    // Using a for loop to clearly hit exactly 100
-    for (; health < 100; ) {
-        health += 10;
-        cout << "Recovering... +" << 10 << " -> " << health << endl;
-        if (health >= 100) {
-            health = 100;
-            break; // ensure exact stop at 100
-        }
-    }
-
-    if (health == 100) {
-        cout << "Fully recovered!" << endl;
-    }
+void KeyRoom(Player &p) {
+    cout << "You step into the final room." << endl;
+    cout << endl << endl;
+    cout << "On a pedestal sits a glowing key." << endl;
+    cout << "You take it and rush back to your friends." << endl;
+    cout << endl << endl;
+    cout << "You unlock their chains and give them the antidote." << endl;
+    cout << "They awaken safely." << endl;
+    cout << endl << endl;
+    cout << "You saved your entire party." << endl;
+    cout << "Congratulations, you win." << endl;
 }
 
-void LevelTable(int baseDef, int baseStr, int baseInt, int baseCool, int baseMaxHP, int baseMag) {
-
-
-    cout << left << setw(6) << "Lvl"
-         << setw(9)  << "Defense"
-         << setw(9)  << "Str"
-         << setw(9)  << "Int"
-         << setw(9)  << "Cool"
-         << setw(10) << "MaxHP"
-         << setw(9)  << "Magic" << endl;
-
-    cout << string(60, '-') << endl;
-
-    // Level 1..10, +5 per level
-    for (int lvl = 1; lvl <= 10; lvl++) {
-        int add = (lvl - 1) * 5;
-        cout << left << setw(6) << lvl
-             << setw(9)  << (baseDef + add)
-             << setw(9)  << (baseStr + add)
-             << setw(9)  << (baseInt + add)
-             << setw(9)  << (baseCool + add)
-             << setw(10) << (baseMaxHP + add)
-             << setw(9)  << (baseMag + add) << endl;
+void PickClass(Player &p) {
+    int type;
+    cout << "Choose your class:" << endl;
+    cout << "1. Warrior" << endl;
+    cout << "2. Mage" << endl;
+    cout << "3. Spy" << endl;
+    cout << "4. Healer" << endl;
+    cout << "5. Tank" << endl;
+    cout << "> ";
+    cin >> type;
+    cout << endl << endl;
+    if (type == 1) {
+        p.character = "Warrior";
+        p.defense = 50; p.strength = 80; p.intelligence = 30;
+        p.cool = 30; p.health = 60; p.maxHealth = 100; p.magic = 10;
     }
-
-    // Total growth from level 1 to 10 is 9 * 5 = +45 per stat
-    cout << "\nTotal growth per stat over 10 levels: +45" << endl;
-}
-
-// ================== CLASS SELECTION ==================
-void PickClass(string &character, int &defense, int &strength, int &intelligence,
-               int &cool, int &health, int &maxHealth, int &magic) {
-
-    int CharacterType;
-
-    cout << "Welcome to the dungeon!" << endl;
-    cout << "Choose your Class:" << endl;
-    cout << "1. Warrior\n2. Mage\n3. Spy\n4. Healer\n5. Tank\n> ";
-    cin >> CharacterType;
-
-    if (CharacterType == 1) {
-        character = "Warrior";
-        defense = 50; strength = 80; intelligence = 30;
-        cool = 30; health = 60; maxHealth = 100; magic = 10;
+    else if (type == 2) {
+        p.character = "Mage";
+        p.defense = 20; p.strength = 20; p.intelligence = 100;
+        p.cool = 60; p.health = 50; p.maxHealth = 100; p.magic = 100;
     }
-    else if (CharacterType == 2) {
-        character = "Mage";
-        defense = 20; strength = 20; intelligence = 100;
-        cool = 60; health = 50; maxHealth = 100; magic = 100;
+    else if (type == 3) {
+        p.character = "Spy";
+        p.defense = 30; p.strength = 40; p.intelligence = 80;
+        p.cool = 90; p.health = 20; p.maxHealth = 60; p.magic = 50;
     }
-    else if (CharacterType == 3) {
-        character = "Spy";
-        defense = 30; strength = 40; intelligence = 80;
-        cool = 90; health = 20; maxHealth = 60; magic = 50;
+    else if (type == 4) {
+        p.character = "Healer";
+        p.defense = 60; p.strength = 20; p.intelligence = 60;
+        p.cool = 50; p.health = 100; p.maxHealth = 150; p.magic = 80;
     }
-    else if (CharacterType == 4) {
-        character = "Healer";
-        defense = 60; strength = 20; intelligence = 60;
-        cool = 50; health = 100; maxHealth = 150; magic = 80;
-    }
-    else if (CharacterType == 5) {
-        character = "Tank";
-        defense = 100; strength = 60; intelligence = 40;
-        cool = 10; health = 150; maxHealth = 200; magic = 0;
+    else if (type == 5) {
+        p.character = "Tank";
+        p.defense = 100; p.strength = 60; p.intelligence = 40;
+        p.cool = 10; p.health = 150; p.maxHealth = 200; p.magic = 0;
     }
     else {
-        cout << "Invalid choice. Please enter a number between 1 and 5.\n\n";
-        cin.clear();
-        cin.ignore(1000, '\n');
-        PickClass(character, defense, strength, intelligence, cool, health, maxHealth, magic);
+        cout << "Invalid selection. Try again." << endl << endl;
+        PickClass(p);
+        return;
     }
+    p.damageBonus = 0;
+    cout << "You chose " << p.character << "." << endl;
+    cout << endl << endl;
+}
+
+int main() {
+    srand(time(nullptr));
+    Player p;
+    PickClass(p);
+    cout << "You awaken in a dark dungeon." << endl;
+    cout << "A sign reads: Find the antidote to save your friends." << endl;
+    cout << endl << endl;
+    cout << "A wolf approaches." << endl;
+    cout << endl << endl;
+    WolfBattle(p);
+    if (p.health <= 0) {
+        cout << "You died." << endl;
+        return 0;
+    }
+    RestRoom(p, 1);
+    cout << "Another wolf approaches." << endl;
+    cout << endl << endl;
+    WolfBattle(p);
+    if (p.health <= 0) {
+        cout << "You died." << endl;
+        return 0;
+    }
+    RestRoom(p, 2);
+    KeyRoom(p);
+    return 0;
 }
